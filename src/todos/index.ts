@@ -1,11 +1,8 @@
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
-
-import { HonoContext } from '..';
-
-import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from './dto';
-import * as todoService from './service';
-
+import { HonoContext } from '@/index';
+import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from '@/todos/dto';
+import { getAllTodos, getTodoById, createTodo, updateTodo, deleteTodo } from '@/todos/service';
 
 const app = new Hono<HonoContext>();
 
@@ -13,7 +10,7 @@ const app = new Hono<HonoContext>();
 app.get('/', async (c) => {
   const logger = c.get('logger');
   logger.info('Fetching all todos');
-  const todos = await todoService.getAllTodos();
+  const todos = await getAllTodos();
   return c.json(todos);
 });
 
@@ -29,7 +26,7 @@ app.get(
   }),
   async (c) => {
     const { id } = c.req.valid('param');
-    const todo = await todoService.getTodoById(id);
+    const todo = await getTodoById(id);
     return c.json(todo);
   }
 );
@@ -46,7 +43,7 @@ app.post(
   }),
   async (c) => {
     const input = c.req.valid('json');
-    const newTodo = await todoService.createTodo(input);
+    const newTodo = await createTodo(input);
     return c.json(newTodo, 201);
   }
 );
@@ -71,7 +68,7 @@ app.put(
   async (c) => {
     const { id } = c.req.valid('param');
     const input = c.req.valid('json');
-    const updatedTodo = await todoService.updateTodo(id, input);
+    const updatedTodo = await updateTodo(id, input);
     return c.json(updatedTodo);
   }
 );
@@ -88,7 +85,7 @@ app.delete(
   }),
   async (c) => {
     const { id } = c.req.valid('param');
-    await todoService.deleteTodo(id);
+    await deleteTodo(id);
     return c.json({ message: 'Todo deleted successfully' });
   }
 );

@@ -4,9 +4,8 @@ import { HTTPException } from 'hono/http-exception';
 import { requestId } from 'hono/request-id';
 import { PinoLogger, pinoLogger } from 'hono-pino';
 import pino from 'pino';
-
-import { authMiddleware } from './middleware';
-import todos from './todos';
+import { authMiddleware } from '@/middleware';
+import todos from '@/todos';
 
 // コンテキストに保存する変数の型定義
 type Variables = {

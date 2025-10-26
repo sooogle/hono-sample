@@ -1,7 +1,6 @@
 import { HTTPException } from 'hono/http-exception';
-import { db } from '../db';
-
-import type { CreateTodoInput, UpdateTodoInput, TodoResponse } from './dto';
+import { db } from '@/db';
+import type { CreateTodoInput, UpdateTodoInput, TodoResponse } from '@/todos/dto';
 
 /**
  * すべてのTODOを取得
