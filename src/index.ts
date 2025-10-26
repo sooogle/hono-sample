@@ -1,11 +1,12 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/aws-lambda';
+import { HTTPException } from 'hono/http-exception';
 import { requestId } from 'hono/request-id';
 import { PinoLogger, pinoLogger } from 'hono-pino';
-import { HTTPException } from 'hono/http-exception';
-import todos from './todos';
-import { authMiddleware } from './middleware';
 import pino from 'pino';
+
+import { authMiddleware } from './middleware';
+import todos from './todos';
 
 // コンテキストに保存する変数の型定義
 type Variables = {

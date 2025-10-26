@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
-import * as todoService from './service';
+
+import { HonoContext } from '..';
 
 import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from './dto';
-import { HonoContext } from '..';
+import * as todoService from './service';
+
 
 const app = new Hono<HonoContext>();
 

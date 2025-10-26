@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createApp } from '../src/index';
+
 import { db } from '../src/db';
+import { createApp } from '../src/index';
 
 // テスト用のHonoアプリケーションを作成
 const app = createApp();

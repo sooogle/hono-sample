@@ -1,6 +1,6 @@
 import { Kysely, PostgresDialect } from 'kysely';
-import { Pool } from 'pg';
 import type { ColumnType } from 'kysely';
+import { Pool } from 'pg';
 
 export interface Database {
   todos: TodosTable;
