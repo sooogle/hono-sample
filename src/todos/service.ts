@@ -14,7 +14,6 @@ export async function getAllTodos(): Promise<TodoResponse[]> {
  */
 export async function getTodoById(id: number): Promise<TodoResponse> {
   const todo = await db.selectFrom('todos').selectAll().where('id', '=', id).executeTakeFirst();
-
   if (!todo) {
     throw new HTTPException(404, { message: 'Todo not found' });
   }
@@ -65,7 +64,11 @@ export async function updateTodo(id: number, input: UpdateTodoInput): Promise<To
  * TODOを削除
  */
 export async function deleteTodo(id: number): Promise<void> {
-  const deletedTodo = await db.deleteFrom('todos').where('id', '=', id).returningAll().executeTakeFirst();
+  const deletedTodo = await db
+    .deleteFrom('todos')
+    .where('id', '=', id)
+    .returningAll()
+    .executeTakeFirst();
 
   if (!deletedTodo) {
     throw new HTTPException(404, { message: 'Todo not found' });

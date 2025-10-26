@@ -1,27 +1,57 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/aws-lambda';
 import { requestId } from 'hono/request-id';
-import { logger } from 'hono/logger';
+import { PinoLogger, pinoLogger } from 'hono-pino';
 import { HTTPException } from 'hono/http-exception';
 import todos from './todos';
 import { authMiddleware } from './middleware';
+import pino from 'pino';
 
 // コンテキストに保存する変数の型定義
 type Variables = {
   requestId: string;
   userId: number;
+  logger: PinoLogger;
 };
 
-export function createApp() {
-  const app = new Hono<{ Variables: Variables }>().basePath('/api');
+export type HonoContext = { Variables: Variables };
 
-  // Logger Middlewareの設定
-  // https://hono.dev/docs/middleware/builtin/logger
-  app.use(logger());
+export function createApp() {
+  const app = new Hono<HonoContext>().basePath('/api');
 
   // Request ID Middlewareの設定
   // https://hono.dev/docs/middleware/builtin/request-id
   app.use('*', requestId());
+
+  // Pino Logger Middlewareの設定（HTTPリクエスト/レスポンスのログ）
+  app.use(
+    '*',
+    pinoLogger({
+      pino: {
+        messageKey: 'message',
+        level: 'debug',
+        formatters: {
+          level: (label) => ({ level: label.toUpperCase() }),
+        },
+        timestamp: pino.stdTimeFunctions.isoTime,
+        transport:
+          process.env.NODE_ENV !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: { colorize: true },
+              }
+            : undefined,
+        base: null,
+      },
+    })
+  );
+
+  // カスタムロガーをコンテキストに追加するミドルウェア
+  app.use('*', async (c, next) => {
+    const { logger, requestId } = c.var;
+    logger.assign({ requestId });
+    await next();
+  });
 
   // 認証ミドルウェアの設定
   app.use('/api/v*', authMiddleware());
@@ -38,7 +68,11 @@ export function createApp() {
   });
 
   // ハンドラーの登録
-  app.get('/health', (c) => c.json({ status: 'ok' }));
+  app.get('/health', (c) => {
+    const { logger } = c.var;
+    logger.info('Health check endpoint called');
+    return c.json({ status: 'ok' });
+  });
   app.route('/v1/todos', todos);
 
   return app;

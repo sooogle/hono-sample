@@ -1,12 +1,16 @@
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
 import * as todoService from './service';
-import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from './dto';
 
-const app = new Hono();
+import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from './dto';
+import { HonoContext } from '..';
+
+const app = new Hono<HonoContext>();
 
 // GET /todos - すべてのTODOを取得
 app.get('/', async (c) => {
+  const logger = c.get('logger');
+  logger.info('Fetching all todos');
   const todos = await todoService.getAllTodos();
   return c.json(todos);
 });
