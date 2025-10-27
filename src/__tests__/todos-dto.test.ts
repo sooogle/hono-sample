@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from '../src/todos/dto';
+import { getTodoParamSchema, createTodoSchema, updateTodoSchema } from '../todos/dto';
 
 describe('getTodoParamSchema', () => {
   it('正の整数を受け入れる', () => {

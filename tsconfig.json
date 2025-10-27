@@ -9,9 +9,11 @@
     "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+    "sourceMap": true,
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "exclude": ["**/*.test.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
